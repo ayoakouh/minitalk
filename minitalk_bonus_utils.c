@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 03:13:49 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/03/08 03:20:12 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/03/09 01:07:38 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	ft_putstr_fd(char *s, int fd)
 {
-	unsigned int	i;
+	int	i;
 
 	i = 0;
-	if (!s)
+	if (s == NULL)
 		return ;
 	while (s[i])
 	{
