@@ -6,11 +6,27 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 03:13:49 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/03/09 01:07:38 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/03/10 23:38:54 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk_bonus.h"
+
+void	set_variabl(int *pid, int *w_bit, int *buff_i, int *res_byte)
+{
+	*pid = 0;
+	*w_bit = 0;
+	*buff_i = 0;
+	*res_byte = 0;
+}
+
+void	clear_buffer(char *buffer)
+{
+	buffer[0] = 0;
+	buffer[1] = 0;
+	buffer[2] = 0;
+	buffer[3] = 0;
+}
 
 void	ft_putstr_fd(char *s, int fd)
 {
@@ -44,6 +60,7 @@ void	ft_putnbr_fd(int n, int fd)
 	else
 		ft_putchar_fd(n + '0', fd);
 }
+
 void	ft_putchar_fd(char c, int fd)
 {
 	write (fd, &c, 1);

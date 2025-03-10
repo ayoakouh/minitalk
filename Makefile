@@ -6,52 +6,51 @@
 #    By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/08 02:54:07 by ayoakouh          #+#    #+#              #
-#    Updated: 2025/03/08 03:38:08 by ayoakouh         ###   ########.fr        #
+#    Updated: 2025/03/10 23:40:24 by ayoakouh         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+
+SRCS = M/client.c M/server.c minitalk_utils.c
+OBJS = $(SRCS:.c=.o)
 CLIENT_NAME = client
 SERVER_NAME = server
-SERVER_BONUS_NAME = server_bonus
+
+BONUS_SRCS = bonus/client_bonus.c bonus/server_bonus.c bonus/minitalk_bonus_utils.c
+BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 CLIENT_BONUS_NAME = client_bonus
-CLIENT_SRC = client.c
-SERVER_SRC = server.c
-CLIENT_BONUS_SRC = client_bonus.c minitalk_bonus_utils.c
-SERVER_BONUS_SRC = server_bonus.c minitalk_bonus_utils.c
-CFLAGS = -Wall -Wextra -Werror
-RM = rm -f
-INCLUDE = minitalk.h
-INCLUDE_BONUS = minitalk_bonus.h
-CC = cc
-OBJ_S = ${SERVER_SRC:.c=.o}
-OBJ_C = ${CLIENT_SRC:.c=.o}
-OBJ_BONUS_C = ${CLIENT_BONUS_SRC:.c=.o}
-OBJ_BONUS_S = ${SERVER_BONUS_SRC:.c=.o}
+SERVER_BONUS_NAME = server_bonus
 
-all: $(SERVER_NAME) $(CLIENT_NAME)
+all: $(CLIENT_NAME) $(SERVER_NAME)
 
-bonus: $(SERVER_BONUS_NAME) $(CLIENT_BONUS_NAME)
+$(CLIENT_NAME): M/client.o M/minitalk_utils.o
+	$(CC) $(CFLAGS) M/client.o M/minitalk_utils.o -o $(CLIENT_NAME)
+
+$(SERVER_NAME): M/server.o M/minitalk_utils.o
+	$(CC) $(CFLAGS) M/server.o M/minitalk_utils.o -o $(SERVER_NAME)
+
+$(OBJS): M/minitalk.h
+
+bonus: $(CLIENT_BONUS_NAME) $(SERVER_BONUS_NAME)
+
+$(CLIENT_BONUS_NAME): bonus/client_bonus.o bonus/minitalk_bonus_utils.o bonus/ft_atoi.o
+	$(CC) $(CFLAGS) bonus/client_bonus.o bonus/minitalk_bonus_utils.o bonus/ft_atoi.o -o $(CLIENT_BONUS_NAME)
+
+$(SERVER_BONUS_NAME): bonus/server_bonus.o bonus/minitalk_bonus_utils.o bonus/ft_atoi.o
+	$(CC) $(CFLAGS) bonus/server_bonus.o bonus/minitalk_bonus_utils.o bonus/ft_atoi.o -o $(SERVER_BONUS_NAME)
+
+$(BONUS_OBJS): bonus/minitalk_bonus.h
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(SERVER_NAME): $(OBJ_S)
-	$(CC) $(CFLAGS) $(OBJ_S) -o $(SERVER_NAME)
-
-$(CLIENT_NAME): $(OBJ_C)
-	$(CC) $(CFLAGS) $(OBJ_C) -o $(CLIENT_NAME)
-
-$(SERVER_BONUS_NAME): $(OBJ_BONUS_S)
-	$(CC) $(CFLAGS) $(OBJ_BONUS_S) -o $(SERVER_BONUS_NAME)
-
-$(CLIENT_BONUS_NAME): $(OBJ_BONUS_C)
-	$(CC) $(CFLAGS) $(OBJ_BONUS_C) -o $(CLIENT_BONUS_NAME)
-
 clean:
-	$(RM) $(OBJ_C) $(OBJ_S) $(OBJ_BONUS_C) $(OBJ_BONUS_S)
+	rm -f $(OBJS) $(BONUS_OBJS)
 
 fclean: clean
-	$(RM) $(CLIENT_NAME) $(SERVER_NAME) $(CLIENT_BONUS_NAME) $(SERVER_BONUS_NAME)
+	rm -f $(CLIENT_NAME) $(SERVER_NAME) $(CLIENT_BONUS_NAME) $(SERVER_BONUS_NAME)
 
 re: fclean all
 

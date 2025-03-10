@@ -5,28 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/10 01:00:29 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/03/10 01:00:47 by ayoakouh         ###   ########.fr       */
+/*   Created: 2025/03/10 17:18:43 by ayoakouh          #+#    #+#             */
+/*   Updated: 2025/03/10 17:34:06 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk_bonus.h"
-
-void	set_variabl(int *pid, int *w_bit, int *buff_i, int *res_byte)
-{
-	*pid = 0;
-	*w_bit = 0;
-	*buff_i = 0;
-	*res_byte = 0;
-}
-
-void	clear_buffer(char *buffer)
-{
-	buffer[0] = 0;
-	buffer[1] = 0;
-	buffer[2] = 0;
-	buffer[3] = 0;
-}
 
 void	print_buff(char *buffer, int *buff_i, int *pid, int *res_byte)
 {
@@ -39,7 +23,7 @@ void	print_buff(char *buffer, int *buff_i, int *pid, int *res_byte)
 	*res_byte = 0;
 }
 
-int	help(char *c)
+int	get_expected_bytes(char *c)
 {
 	if ((*c & 0x80) == 0x00)
 		return (1);
@@ -52,13 +36,25 @@ int	help(char *c)
 	return (0);
 }
 
+void	process_message(char *buffer, int *buff_i, int *pid,
+	int *expected_bytes)
+{
+	(*buff_i)++;
+	if (*expected_bytes == 0)
+		*expected_bytes = get_expected_bytes(&buffer[0]);
+	if (*buff_i == *expected_bytes)
+	{
+		print_buff(buffer, buff_i, pid, expected_bytes);
+	}
+}
+
 void	handel_sig(int sin, siginfo_t *info, void *context)
 {
-	static int	pid = 0;
-	static int	count_bit = 0;
-	static char	buffer[4] = {0};
-	static int	buff_i = 0;
-	static int	expected_bytes = 0;
+	static int	pid;
+	static int	count_bit;
+	static char	buffer[4];
+	static int	buff_i;
+	static int	expected_bytes;
 
 	(void)context;
 	if (pid == 0)
@@ -74,14 +70,8 @@ void	handel_sig(int sin, siginfo_t *info, void *context)
 	count_bit++;
 	if (count_bit % 8 == 0)
 	{
-		buff_i++;
-		if (expected_bytes == 0)
-			expected_bytes = help(&buffer[0]);
-		if (buff_i == expected_bytes)
-		{
-			print_buff(buffer, &buff_i, &pid, &expected_bytes);
-			count_bit = 0;
-		}
+		process_message(buffer, &buff_i, &pid, &expected_bytes);
+		count_bit = 0;
 	}
 }
 
